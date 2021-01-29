@@ -1,58 +1,77 @@
 import React from 'react';
-import { StyleSheet, Button, View, SafeAreaView, Text, Alert } from 'react-native';
+import { StyleSheet, Button, TextInput, View, SafeAreaView, Text, Alert } from 'react-native';
+import {useState} from 'react';
+import { ListItem, Icon } from 'react-native-elements';
+import { TouchableHighlight } from "react-native";
 
-const Separator = () => (
-  <View style={styles.separator} />
-);
+
+
+
+const Separator = () => {
+  return <View style={styles.separator} />
+};
+
+
 
 export default function App() {
+  const [inputValue, setInputValue] = useState();
+  const [tasks, setTasks] = useState([]);
+
+
+  const handleOnChange = (enteredValue)=>{
+    setInputValue(enteredValue);
+  }
+  const addTask = ()=>{
+    tasks.push(inputValue);
+    setInputValue('');
+    setTasks(tasks);
+  }
+  const clearTasks = () =>{
+    setInputValue('');
+    setTasks([]);
+  }
+
+  const removeTask = (elt, key) =>{
+    console.log('elt', elt.target);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-    <View>
-      <Text style={styles.title}>
-        The title and onPress handler are required. It is recommended to set accessibilityLabel to help make your app usable by everyone.
-      </Text>
-      <Button
-        title="Press me"
-        onPress={() => Alert.alert('Simple Button pressed')}
-      />
-    </View>
-    <Separator />
-    <View>
-      <Text style={styles.title}>
-        Adjust the color in a way that looks standard on each platform. On  iOS, the color prop controls the color of the text. On Android, the color adjusts the background color of the button.
-      </Text>
-      <Button
-        title="Press me"
-        color="#f194ff"
-        onPress={() => Alert.alert('Button with adjusted color pressed')}
-      />
-    </View>
-    <Separator />
-    <View>
-      <Text style={styles.title}>
-        All interaction for the component are disabled.
-      </Text>
-      <Button
-        title="Press me"
-        disabled
-        onPress={() => Alert.alert('Cannot press this one')}
-      />
-    </View>
-    <Separator />
-    <View>
-      <Text style={styles.title}>
-        This layout strategy lets the title define the width of the button.
-      </Text>
-      <View style={styles.fixToText}>
-        <Button
-          title="Left button"
-          onPress={() => Alert.alert('Left button pressed')}
-        />
-        <Button
-          title="Right button"
-          onPress={() => Alert.alert('Right button pressed')}
-        />
+    <View style={styles.container}>
+      <View style={styles.container2}>
+        <Text style={styles.title}>Tasks list</Text>
+        <Separator/>
+        <Text style={styles.question}>A new task ?</Text>
+          <View style={styles.inputBox}>
+            <TextInput style={styles.input} placeholder="todo" value={inputValue} onChangeText={handleOnChange} onSubmitEditing={addTask} />
+            <Button style={styles.btnAdd} title="Add" onPress={addTask} /><Button title="Clear" onPress={clearTasks} />
+          </View>
+      </View>
+      <View style={styles.listItems}>
+      {tasks.map(
+          (task, index)=>{
+            return (
+            <ListItem key={'task_'+index} bottomDivider
+                bottomDivider
+  
+                containerStyle={{ backgroundColor: "#efefef" }}
+                disabledStyle={{ opacity: 0.5 }}
+                onLongPress={removeTask}
+                onPress={() => console.log("onPress()")}
+                pad={20}
+                topDivider
+              >
+              <ListItem.Content>
+                <ListItem.Title><Text>#{index + 1}</Text></ListItem.Title>
+              </ListItem.Content>
+              <ListItem.Subtitle>
+                  <Text>{task}</Text>
+                </ListItem.Subtitle>
+                <ListItem.CheckBox />
+            </ListItem>
+            )
+          }
+        )}
       </View>
     </View>
   </SafeAreaView>
@@ -60,12 +79,21 @@ export default function App() {
 }
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
-    marginHorizontal: 16,
+    padding:30
   },
+  container2 : {
+      flexDirection: "column",
+      alignItems:"flex-start"
+  },
+  listItems : {
+    borderStyle:'dashed',
+    padding:10,
+    borderWidth:1,
+    borderColor:'red'
+},
   title: {
     textAlign: 'center',
+    fontWeight:"bold",
     marginVertical: 8,
   },
   fixToText: {
@@ -77,4 +105,26 @@ const styles = StyleSheet.create({
     borderBottomColor: '#737373',
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
+  question:{
+    textAlign:'center',
+  },
+  input:{
+    textAlign:'center',
+    width: "50%",
+  },
+  tasks:{
+    borderStyle:'dashed',
+    padding:10,
+    borderWidth:1,
+    borderColor:'red'
+  },
+  inputBox:{
+    borderWidth:1,
+    flexDirection:"row",
+    alignItems:"stretch",
+  },
+  btnAdd:{
+    backgroundColor:"#ff0000",
+    borderWidth:2,
+  }
 });
